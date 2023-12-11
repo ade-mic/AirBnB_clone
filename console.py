@@ -4,7 +4,7 @@ entry point of the command interpreter for AirBnB project
 """
 import cmd
 import inspect
-import models
+from models import base_model
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -38,12 +38,13 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
         # Check if the argument is a valid class name in my_module
-        if not inspect.isclass(getattr(models, arg, None)):
+        # members = inspect.getmembers(models)
+        if not inspect.isclass(getattr(base_model, arg, None)):
             print("** class doesn't exist **")
             return
         
         # Create a new instance of the class
-        obj = getattr(models, arg)()
+        obj = getattr(base_model, arg)()
         # Save the instance to the JSON file
         obj.save()
         # Print the id of the instance
