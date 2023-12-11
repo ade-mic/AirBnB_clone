@@ -53,7 +53,7 @@ class BaseModel:
 
     def __str__(self):
         """ String representation of an object"""
-        return '[{}] ({}) <{}>'.format(type(self).__name__,
+        return '[{}] ({}) {}'.format(type(self).__name__,
                                        self.id, self.__dict__)
 
     def save(self):
