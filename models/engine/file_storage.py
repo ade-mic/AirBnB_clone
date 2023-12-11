@@ -29,8 +29,8 @@ class FileStorage:
         no exception should be raised)
     """
 
-    def __init__(self, file_path):
-
+    def __init__(self):
+        file_path = 'file.json'
         # private class attribute
         self.__file_path = file_path
         self.__objects = {}
