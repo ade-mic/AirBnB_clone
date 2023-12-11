@@ -96,7 +96,7 @@ class HBNBCommand(cmd.Cmd):
             # print string representation
             print(str(instance))
 
-    def do_delete(self, arg):
+    def do_destroy(self, arg):
         """
          Deletes an instance based on the class name and id
          (save the change into the JSON file).
@@ -151,11 +151,11 @@ class HBNBCommand(cmd.Cmd):
         class name Ex: $ all BaseModel or $ all
         """
         all_objs = storage.all()
+        result = []
         if len(arg) == 0:
             for obj_id in all_objs.keys():
                 obj = all_objs[obj_id]
-                print(obj)
-            return
+                result.append(str(obj))
         elif len(arg) > 0:
         # Check if the model is a valid class name in my_module
             if not inspect.isclass(getattr(base_model, arg, None)):
@@ -165,9 +165,11 @@ class HBNBCommand(cmd.Cmd):
                 class_name, id = obj_id.split(".")
                 # check if class_name is model
                 if class_name == str(arg):
-                    print(all_objs[obj_id])
-            return
-        # if not found        
+                    obj = all_objs[obj_id]
+                    result.append(str(obj))
+        print(result)
+        return
+       
 
     def do_update(self, arg):
         """
