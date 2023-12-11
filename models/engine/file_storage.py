@@ -6,7 +6,6 @@ to a JSON file and deserializes JSON file to instances
 import json
 import os
 
-
 class FileStorage:
     """
     This class class serializes instances to a JSON file
@@ -68,7 +67,12 @@ class FileStorage:
         (only if the JSON file (__file_path) exists
         """
         # check if file
-        if os.path.exists(self.__file_path):
+        try:
             with open(self.__file_path, "r") as f:
                 data = json.load(f)
-                self.__objects = data
+                for key, value in data.items():
+                    class_name, obj_id  = key.split(".")
+                    from models.base_model import BaseModel
+                    self.__objects[key] = BaseModel(**value)
+        except FileNotFoundError:
+            pass
