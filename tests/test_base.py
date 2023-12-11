@@ -18,8 +18,6 @@ class TestBaseModel(unittest.TestCase):
 
     # Define a test method for the save method of the BaseModel class
     def test_save(self):
-        # Create an instance of the BaseModel class
-        self.base_model = BaseModel()
         # Save the instance
         self.base_model.save()
         # Check that the updated_at attribute has changed after saving
@@ -27,8 +25,6 @@ class TestBaseModel(unittest.TestCase):
 
     # Define a test method for the to_dict method of the BaseModel class
     def test_to_dict(self):
-        # Create an instance of the BaseModel class
-        self.base_model = BaseModel()
         # Convert the instance to a dictionary
         base_model_dict = self.base_model.to_dict()
         # Check that the dictionary has a __class__ key
@@ -47,7 +43,6 @@ class TestBaseModel(unittest.TestCase):
                          self.base_model.updated_at.isoformat())
 
     def test_kwargs(self):
-        self.base_model = BaseModel()
         self.base_model.name = "First Model"
         self.base_model.number = 17
         base_model_json = self.base_model.to_dict()
@@ -55,6 +50,10 @@ class TestBaseModel(unittest.TestCase):
         self.assertIsNot(new_base_model, self.base_model)
         self.assertDictEqual(self.base_model.__dict__, new_base_model.__dict__)
 
+    def test_str_method(self):
+        expected_str = f"[BaseModel] ({self.base_model.id}) {self.base_model.__dict__}"
+        self.assertEqual(str(self.base_model), expected_str)
+    
 
 # Add an entry point to execute the tests from the command line
 if __name__ == '__main__':
