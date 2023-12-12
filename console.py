@@ -233,14 +233,7 @@ class HBNBCommand(cmd.Cmd):
         # print(type(args[3]))
         # storage.save()
         # if the attribute name is not one of the "simple" arguments
-        if type(getattr(all_objs[stored_key], attr_name, None)) \
-        not in [str, int, float]:
-            print("unable to get attribute")
-            return
         # if the attribute name is one of the reserved attributes
-        if attr_name in ['id', 'created_at', 'updated_at']:
-            print("attribute reserved")
-            return
         try:
             # cast the attribute value to the attribute type
             attr_value = type(getattr(all_objs[stored_key], attr_name))(args[3])
