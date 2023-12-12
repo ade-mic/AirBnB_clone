@@ -230,7 +230,7 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return
         # set attribute value
-        attr_value = type(getattr(all_objs[stored_key], attr_name))(args[3])
+        attr_value = args[3]
         # update the attribute
         setattr(all_objs[stored_key], attr_name, attr_value)
         # save it
