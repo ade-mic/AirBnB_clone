@@ -229,32 +229,29 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 3:
             print("** value missing **")
             return
-        setattr(all_objs[stored_key], attr_name, args[3])
-        print(type(args[3]))
+        # setattr(all_objs[stored_key], attr_name, args[3])
+        # print(type(args[3]))
+        # storage.save()
+        # if the attribute name is not one of the "simple" arguments
+        if type(getattr(all_objs[stored_key], attr_name, None)) \
+        not in [str, int, float]:
+            print("unable to get attribute")
+            return
+        # if the attribute name is one of the reserved attributes
+        if attr_name in ['id', 'created_at', 'updated_at']:
+            print("attribute reserved")
+            return
+        try:
+            # cast the attribute value to the attribute type
+            attr_value = type(getattr(all_objs[stored_key], attr_name))(args[3])
+        except ValueError:
+            # if casting fails
+            print("** invalid attribute value")
+            return
+        # update the attribute
+        setattr(all_objs[stored_key], attr_name, attr_value)
+        # open the JSON file in write mode
         storage.save()
-        # # if the attribute name is not one of the "simple" arguments
-        # if type(getattr(all_objs[stored_key], attr_name, None)) \
-        # not in [str, int, float]:
-        #     print("unable to get attr")
-        #     return
-        # # if the attribute name is one of the reserved attributes
-        # if attr_name in ['id', 'created_at', 'updated_at']:
-        #     print("attr reserved")
-        #     return
-        # try:
-        #     # cast the attribute value to the attribute type
-        #     attr_value = type(getattr(all_objs[stored_key]))(args[3])
-        # except ValueError:
-        #     # if casting fails
-        #     print("** invalid attribute value")
-        #     return
-        # # update the attribute
-        # setattr(all_objs[stored_key], attr_name, attr_value)
-        # # open the JSON file in write mode
-        # import json
-        # with open("file.json", "w") as f:
-        #      # save the change into the JSON file
-        #     json.dump(all_objs, f)
     def do_quit(self, line):
         """
         The quit exit the program
