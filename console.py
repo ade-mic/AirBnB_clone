@@ -217,21 +217,44 @@ class HBNBCommand(cmd.Cmd):
         instance = all_objs.get(stored_key)
         if instance is None:
             # if instance doesnt exist
-            print("** no instance foundd **")
+            print("** no instance found **")
             return
         # check if attribure name is inputted
         if len(args) == 2:
             print("** attribute name missing **")
             return
+        # Get attribute name
+        attr_name = args[2]
          # Check if attribute name exists
         if len(args) == 3:
             print("** value missing **")
             return
-        # get type of attribute
-        attr = all_objs[stored_key].get(args[2])
+        # setattr(all_objs[stored_key], attr_name, args[3])
+        # print(type(args[3]))
+        # storage.save()
+        # if the attribute name is not one of the "simple" arguments
+        if type(getattr(all_objs[stored_key], attr_name, None)) \
+        not in [str, int, float]:
+            print("unable to get attr")
+            return
+        # if the attribute name is one of the reserved attributes
+        if attr_name in ['id', 'created_at', 'updated_at']:
+            print("attr reserved")
+            return
+        try:
+            # cast the attribute value to the attribute type
+            attr_value = type(getattr(all_objs[stored_key]))(args[3])
+        except ValueError:
+            # if casting fails
+            print("** invalid attribute value")
+            return
         # update the attribute
-        all_objs[stored_key][attr] = args[3]
-
+        setattr(all_objs[stored_key], attr_name, attr_value)
+        # open the JSON file in write mode
+        import json
+        with open("file.json", "w") as f:
+             # save the change into the JSON file
+            json.dump(all_objs, f)
     def do_quit(self, line):
         """
         The quit exit the program
