@@ -45,7 +45,8 @@ class FileStorage:
         sets in __objects the obj with
         key <obj class name>.id
         """
-        self.__objects["{}.{}".format(type(obj).__name__, obj.id)] = obj
+        key = type(obj).__name__ + "." + obj.id
+        self.__objects[key] = obj
 
     def save(self):
         """
@@ -73,6 +74,10 @@ class FileStorage:
                 for key, value in data.items():
                     class_name, obj_id  = key.split(".")
                     from models.base_model import BaseModel
-                    self.__objects[key] = BaseModel(**value)
+                    from models.user import User
+                    if class_name == "BaseModel":
+                        self.__objects[key] = BaseModel(**value)
+                    elif class_name == "User":
+                        self.__objects[key] = User(**value)
         except FileNotFoundError:
             pass

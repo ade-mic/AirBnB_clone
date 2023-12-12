@@ -5,6 +5,7 @@ entry point of the command interpreter for AirBnB project
 import cmd
 import inspect
 from models import base_model
+from models import user
 from models import storage
 
 class HBNBCommand(cmd.Cmd):
@@ -39,15 +40,23 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
         # Check if the argument is a valid class name in my_module
-        if not inspect.isclass(getattr(base_model, arg, None)):
+        if (not inspect.isclass(getattr(base_model, arg, None))) or \
+        (not inspect.isclass(getattr(user, arg, None))):
             print("** class doesn't exist **")
             return
         # Create a new instance of the class
-        obj = getattr(base_model, arg)()
-        # Save the instance to the JSON file
-        obj.save()
-        # Print the id of the instance
-        print(obj.id)
+        if arg == "BaseModel":
+            obj = getattr(base_model, arg)()
+            # Save the instance to the JSON file
+            obj.save()
+            # Print the id of the instance
+            print(obj.id)
+        elif arg == "User":
+            obj = getattr(user, arg)()
+            # Save the instance to the JSON file
+            obj.save()
+            # Print the id of the instance
+            print(obj.id)
     
     def do_show(self, arg):
         """
@@ -80,7 +89,8 @@ class HBNBCommand(cmd.Cmd):
         # Get id and classname
         
         # Check if the argument is a valid class name in my_module
-        if not inspect.isclass(getattr(base_model, model, None)):
+        if not inspect.isclass(getattr(base_model, model, None)) or \
+            (not inspect.isclass(getattr(user, model, None))):
             print("** class doesn't exist **")
             return
         # check if the instance of the class name doesnt exist for the id
@@ -128,7 +138,8 @@ class HBNBCommand(cmd.Cmd):
         # Get classname
         id  = args[1]     
         # Check if the argument is a valid class name in my_module
-        if not inspect.isclass(getattr(base_model, model, None)):
+        if not inspect.isclass(getattr(base_model, model, None)) or \
+            not inspect.isclass(getattr(user, model, None)):
             print("** class doesn't exist **")
             return
         # check if the instance of the class name doesnt exist for the id
@@ -158,7 +169,8 @@ class HBNBCommand(cmd.Cmd):
                 result.append(str(obj))
         elif len(arg) > 0:
         # Check if the model is a valid class name in my_module
-            if not inspect.isclass(getattr(base_model, arg, None)):
+            if not inspect.isclass(getattr(base_model, model, None)) or \
+            not inspect.isclass(getattr(user, model, None)):
                 print("** class doesn't exist **")
                 return
             for obj_id in all_objs.keys():
