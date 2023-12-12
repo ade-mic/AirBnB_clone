@@ -229,21 +229,11 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 3:
             print("** value missing **")
             return
-        # setattr(all_objs[stored_key], attr_name, args[3])
-        # print(type(args[3]))
-        # storage.save()
-        # if the attribute name is not one of the "simple" arguments
-        # if the attribute name is one of the reserved attributes
-        try:
-            # cast the attribute value to the attribute type
-            attr_value = type(getattr(all_objs[stored_key], attr_name))(args[3])
-        except ValueError:
-            # if casting fails
-            print("** invalid attribute value")
-            return
+        # set attribute value
+        attr_value = type(getattr(all_objs[stored_key], attr_name))(args[3])
         # update the attribute
         setattr(all_objs[stored_key], attr_name, attr_value)
-        # open the JSON file in write mode
+        # save it
         storage.save()
     def do_quit(self, line):
         """
