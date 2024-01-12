@@ -168,6 +168,7 @@ class HBNBCommand(cmd.Cmd):
                 obj = all_objs[obj_id]
                 result.append(str(obj))
         elif len(arg) > 0:
+            model = arg
         # Check if the model is a valid class name in my_module
             if not inspect.isclass(getattr(base_model, model, None)) or \
             not inspect.isclass(getattr(user, model, None)):
