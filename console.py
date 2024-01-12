@@ -4,9 +4,8 @@ entry point of the command interpreter for AirBnB project
 """
 import cmd
 import inspect
-from models import base_model
-from models import user
-from models import storage
+from models import base_model, user, place, state, city, amenity, review, storage
+
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -40,10 +39,10 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
         # Check if the argument is a valid class name in my_module
-        if (not inspect.isclass(getattr(base_model, arg, None))) or \
-        (not inspect.isclass(getattr(user, arg, None))):
-            print("** class doesn't exist **")
-            return
+        if not any(inspect.isclass(getattr(models, arg, None)) \
+        for models in [base_model, user, place, state, city, amenity, review]):
+                   print("** class doesn't exist **")
+                   return
         # Create a new instance of the class
         if arg == "BaseModel":
             obj = getattr(base_model, arg)()
@@ -57,7 +56,37 @@ class HBNBCommand(cmd.Cmd):
             obj.save()
             # Print the id of the instance
             print(obj.id)
-    
+        elif arg == "Place":
+            obj = getattr(place, arg)()
+            # Save the instance to the JSON file
+            obj.save()
+            # Print the id of the instance
+            print(obj.id)
+        elif arg == "State":
+            obj = getattr(state, arg)()
+            # Save the instance to the JSON file
+            obj.save()
+            # Print the id of the instance
+            print(obj.id)
+        elif arg == "City":
+            obj = getattr(city, arg)()
+            # Save the instance to the JSON file
+            obj.save()
+            # Print the id of the instance
+            print(obj.id)
+        elif arg == "Amenity":
+            obj = getattr(amenity, arg)()
+            # Save the instance to the JSON file
+            obj.save()
+            # Print the id of the instance
+            print(obj.id)
+        elif arg == "Review":
+            obj = getattr(review, arg)()
+            # Save the instance to the JSON file
+            obj.save()
+            # Print the id of the instance
+            print(obj.id)
+
     def do_show(self, arg):
         """
         Prints the strinf representantion based on the class
@@ -89,8 +118,8 @@ class HBNBCommand(cmd.Cmd):
         # Get id and classname
         
         # Check if the argument is a valid class name in my_module
-        if not inspect.isclass(getattr(base_model, model, None)) or \
-            (not inspect.isclass(getattr(user, model, None))):
+        if not any(inspect.isclass(getattr(models, model, None)) \
+        for models in [base_model, user, place, state, city, amenity, review]):
             print("** class doesn't exist **")
             return
         # check if the instance of the class name doesnt exist for the id
@@ -138,8 +167,8 @@ class HBNBCommand(cmd.Cmd):
         # Get classname
         id  = args[1]     
         # Check if the argument is a valid class name in my_module
-        if not inspect.isclass(getattr(base_model, model, None)) or \
-            not inspect.isclass(getattr(user, model, None)):
+        if not any(inspect.isclass(getattr(models, model, None)) \
+        for models in [base_model, user, place, state, city, amenity, review]):
             print("** class doesn't exist **")
             return
         # check if the instance of the class name doesnt exist for the id
@@ -150,7 +179,7 @@ class HBNBCommand(cmd.Cmd):
         instance = all_objs.get(stored_key)
         if instance is None:
             # if instance doesnt exist
-            print("** no instance foundd **")
+            print("** no instance found **")
         else:
             # delete instance
             del all_objs[stored_key]
@@ -167,22 +196,23 @@ class HBNBCommand(cmd.Cmd):
             for obj_id in all_objs.keys():
                 obj = all_objs[obj_id]
                 result.append(str(obj))
-        elif len(arg) > 0:
-            model = arg
         # Check if the model is a valid class name in my_module
-            if not inspect.isclass(getattr(base_model, model, None)) or \
-            not inspect.isclass(getattr(user, model, None)):
+        else:
+            model = arg
+            if any(inspect.isclass(getattr(models, model, None)) \
+            for models in [base_model, user, place, state, city, amenity, review]):
+                for obj_id in all_objs.keys():
+                    class_name, id = obj_id.split(".")
+                    # check if class_name is model
+                    if class_name == model:
+                        obj = all_objs[obj_id]
+                        result.append(str(obj))
+            else:
                 print("** class doesn't exist **")
                 return
-            for obj_id in all_objs.keys():
-                class_name, id = obj_id.split(".")
-                # check if class_name is model
-                if class_name == str(arg):
-                    obj = all_objs[obj_id]
-                    result.append(str(obj))
+            
         print(result)
         return
-       
 
     def do_update(self, arg):
         """
@@ -208,6 +238,7 @@ class HBNBCommand(cmd.Cmd):
             "Betty" = $ update BaseModel 1234-1234-1234
               email "aibnb@mail.com")
         """
+        import datetime
         # split arg by whitespace
         args = arg.split()
         # check if classs name is passed
@@ -215,7 +246,9 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
         # check if class name exist
-        if not inspect.isclass(getattr(base_model, args[0], None)):
+        model = args[0]
+        if not any(inspect.isclass(getattr(models, model, None)) \
+            for models in [base_model, user, place, state, city, amenity, review]):
             print("** class doesn't exist **")
             return
         # check if id is missing
@@ -246,6 +279,8 @@ class HBNBCommand(cmd.Cmd):
         attr_value = args[3]
         # update the attribute
         setattr(all_objs[stored_key], attr_name, attr_value)
+        # update the update_at attribute
+        all_objs[stored_key].updated_at = datetime.datetime.now()
         # save it
         storage.save()
     def do_quit(self, line):

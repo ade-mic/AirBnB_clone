@@ -75,9 +75,22 @@ class FileStorage:
                     class_name, obj_id  = key.split(".")
                     from models.base_model import BaseModel
                     from models.user import User
+                    from models.place import Place
+                    from models.state import State
+                    from models.city import City
+                    from models.amenity import Amenity
+                    from models.review import Review
                     if class_name == "BaseModel":
                         self.__objects[key] = BaseModel(**value)
                     elif class_name == "User":
                         self.__objects[key] = User(**value)
+                    elif class_name == "Place":
+                        self.__objects[key] = Place(**value)
+                    elif class_name == "State":
+                        self.__objects[key] = State(**value)
+                    elif class_name == "City":
+                        self.objects[key] = City(**value)
+                    elif class_name == "Review":
+                        self.objects[key] = Review(**value)
         except FileNotFoundError:
             pass
