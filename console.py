@@ -284,14 +284,40 @@ class HBNBCommand(cmd.Cmd):
         # save it
         storage.save()
 
+    def do_count(self, arg):
+        """
+        Retrieve  the number of instances of a class
+        """
+        all_objs = storage.all()
+        count = 0
+        model = arg
+        if any(inspect.isclass(getattr(models, model, None)) \
+        for models in [base_model, user, place, state, city, amenity, review]):
+            for obj_id in all_objs.keys():
+                class_name, id = obj_id.split(".")
+                # check if class_name is model
+                if class_name == model:
+                    count += count + 1 
+        else:
+            print("** class doesn't exist **")
+            return
+            
+        print(count)
+        return
+            
+            
+
     def default(self, line):
         """
         Handle unrecongnised commands
         """
         #split the line into command and arguements
         args = line.split(".")
-        if len(args) == 2 and args[1] == "all()":
+        if len(args) == 2:
+            if args[1] == "all()":
                self.do_all(args[0])
+            elif args[1] == "count()":
+                self.do_count(args[0])
         else:
             print("*** Unknown syntax:", line)
     def do_quit(self, line):
