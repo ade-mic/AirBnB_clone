@@ -283,6 +283,17 @@ class HBNBCommand(cmd.Cmd):
         all_objs[stored_key].updated_at = datetime.datetime.now()
         # save it
         storage.save()
+
+    def default(self, line):
+        """
+        Handle unrecongnised commands
+        """
+        #split the line into command and arguements
+        args = line.split(".")
+        if len(args) == 2 and args[1] == "all()":
+               self.do_all(args[0])
+        else:
+            print("*** Unknown syntax:", line)
     def do_quit(self, line):
         """
         The quit exit the program
