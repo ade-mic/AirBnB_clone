@@ -317,7 +317,11 @@ class HBNBCommand(cmd.Cmd):
             if args[1][:4] == "show":
                 instance_id = args[1][6:-2]
                 show_args = args[0] + " " + instance_id
-                self.do_show(show_args)                
+                self.do_show(show_args)
+            elif args[1][:7] == "destroy":
+                instance_id = args[1][9:-2]
+                destroy_args = args[0] + " " + instance_id
+                self.do_destroy(destroy_args)
             elif args[1] == "all()":
                self.do_all(args[0])
             elif args[1] == "count()":
