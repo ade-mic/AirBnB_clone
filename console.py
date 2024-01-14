@@ -269,20 +269,44 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 2:
             print("** attribute name missing **")
             return
-        # Get attribute name
-        attr_name = args[2]
-         # Check if attribute name exists
-        if len(args) == 3:
+
+         # Check if attribute name exists and not a dictionary
+        if len(args) == 3 and not args[2].startswith("{"):
             print("** value missing **")
             return
-        # set attribute value
-        attr_value = args[3]
-        # update the attribute
-        setattr(all_objs[stored_key], attr_name, attr_value)
-        # update the update_at attribute
-        all_objs[stored_key].updated_at = datetime.datetime.now()
-        # save it
-        storage.save()
+        # check if the attribute name and value are provided
+        if len(args) >= 4 and not args[2].startswith("{"):
+            # update with attribute name and value
+            attr_name = args[2]
+            attr_value = args[3]
+            # update the attribute
+            setattr(all_objs[stored_key], attr_name, attr_value)
+            # update the update_at attribute
+            all_objs[stored_key].updated_at = datetime.datetime.now()
+            # save it
+            storage.save()
+        else:
+            # update the dictionary representation
+            try:
+                # Convert string to dictionary
+                dict_repr = eval(" ".join(args[2:]))
+                self.update_with_dict(all_objs[stored_key], dict_repr)
+                # update the update_at attribute
+                all_objs[stored_key].updated_at = datetime.datetime.now()
+                # save it
+                storage.save()
+            except Exception as e:
+                print(f"Error updating with dictionary representation: {e}")
+
+    def update_with_dict(self, obj, update_dict):
+        """
+        Update an instance with a dictionary representation
+        Args:
+            obj: Instance to be updated
+            update_dict: Dictionary representation with attributes and values
+        """
+        for key, value in update_dict.items():
+            setattr(obj, key, value)
 
     def do_count(self, arg):
         """
@@ -323,7 +347,7 @@ class HBNBCommand(cmd.Cmd):
                 destroy_args = args[0] + " " + instance_id
                 self.do_destroy(destroy_args)
             elif args[1][:6] == "update":
-                update_arg = args[1][8:-2]
+                update_arg = args[1][8:-2] 
                 update_args = update_arg.replace(",", " ")
                 update_args = args[0] + " " + \
                     update_args.replace('"', "")
