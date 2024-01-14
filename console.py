@@ -322,6 +322,12 @@ class HBNBCommand(cmd.Cmd):
                 instance_id = args[1][9:-2]
                 destroy_args = args[0] + " " + instance_id
                 self.do_destroy(destroy_args)
+            elif args[1][:6] == "update":
+                update_arg = args[1][8:-2]
+                update_args = update_arg.replace(",", " ")
+                update_args = args[0] + " " + \
+                    update_args.replace('"', "")
+                self.do_update(update_args)
             elif args[1] == "all()":
                self.do_all(args[0])
             elif args[1] == "count()":
