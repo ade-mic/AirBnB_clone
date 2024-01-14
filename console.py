@@ -311,10 +311,14 @@ class HBNBCommand(cmd.Cmd):
         """
         Handle unrecongnised commands
         """
-        #split the line into command and arguements
+        # split the line into command and arguements
         args = line.split(".")
         if len(args) == 2:
-            if args[1] == "all()":
+            if args[1][:4] == "show":
+                instance_id = args[1][6:-2]
+                show_args = args[0] + " " + instance_id
+                self.do_show(show_args)                
+            elif args[1] == "all()":
                self.do_all(args[0])
             elif args[1] == "count()":
                 self.do_count(args[0])
