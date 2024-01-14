@@ -5,7 +5,7 @@ entry point of the command interpreter for AirBnB project
 import cmd
 import inspect
 from models import base_model, user, place, state, city, amenity, review, storage
-
+import shlex
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -259,7 +259,8 @@ class HBNBCommand(cmd.Cmd):
         # store all instances
         all_objs = storage.all()
         # get instance
-        stored_key = str(args[0]) + "." + str(args[1])
+        instance_id = args[1]
+        stored_key = "{}.{}".format(model, instance_id)
         instance = all_objs.get(stored_key)
         if instance is None:
             # if instance doesnt exist
@@ -280,7 +281,7 @@ class HBNBCommand(cmd.Cmd):
             attr_name = args[2]
             attr_value = args[3]
             # update the attribute
-            setattr(all_objs[stored_key], attr_name, attr_value)
+            setattr(all_objs[stored_key], attr_name, ast.literal_eval(attr_value))
             # update the update_at attribute
             all_objs[stored_key].updated_at = datetime.datetime.now()
             # save it
@@ -338,26 +339,45 @@ class HBNBCommand(cmd.Cmd):
         # split the line into command and arguements
         args = line.split(".")
         if len(args) == 2:
-            if args[1][:4] == "show":
+            command = args[1].strip()
+            if command.startswith("show"):
                 instance_id = args[1][6:-2]
-                show_args = args[0] + " " + instance_id
+                instance_id = command[6:-2].strip()
+                show_args = f"{args[0]} {instance_id}"
                 self.do_show(show_args)
-            elif args[1][:7] == "destroy":
-                instance_id = args[1][9:-2]
-                destroy_args = args[0] + " " + instance_id
+            elif command.startswith("destroy"):
+                instance_id = command[9:-2].strip()
+                destroy_args = f"{args[0]} {instance_id}"
                 self.do_destroy(destroy_args)
-            elif args[1][:6] == "update":
-                update_arg = args[1][8:-2] 
-                update_args = update_arg.replace(",", " ")
-                update_args = args[0] + " " + \
-                    update_args.replace('"', "")
-                self.do_update(update_args)
-            elif args[1] == "all()":
-               self.do_all(args[0])
-            elif args[1] == "count()":
+            elif command.startswith("update"):
+                self.handle_update_command(args[0], command)
+            elif command == "all()":
+                self.do_all(args[0])
+            elif command == "count()":
                 self.do_count(args[0])
+            else:
+                print("*** Unknown command:", command)
         else:
             print("*** Unknown syntax:", line)
+
+    def handle_update_command(self, class_name, update_command):
+        """
+        Helper method to handle update command
+        """
+        instance_id_start = update_command.find("(") + 1
+        instance_id_end = update_command.find(")")
+        
+        if instance_id_start > 0 and instance_id_end > instance_id_start:
+            instance_id = update_command[instance_id_start:instance_id_end].strip()
+             # Use shlex to properly handle quoted values
+            lexer = shlex.shlex(update_command[instance_id_end + 1:], posix=True)
+            lexer.whitespace_split = True
+            lexer.whitespace += ','
+            update_args = f"{class_name} {instance_id} {' '.join(lexer)}"
+            self.do_update(update_args)
+        else:
+            print("*** Invalid update command:", update_command)
+
     def do_quit(self, line):
         """
         The quit exit the program
