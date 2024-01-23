@@ -48,3 +48,32 @@ button:hover {
     margin: 0px;
     margin-left: 30px;
 }
+.popover {
+    display: none;
+    background-color: #fafafa;
+    width: 25%;
+    border: #DDDDDD 1px solid;
+    border-radius: 4px;
+    list-style-type: none;
+    position: absolute;
+    top: 70px;
+    margin-top: 0px;
+    padding: 0px;
+}
+.popover ul {
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+}
+.popover h2 {
+    margin-left: 30px;
+}
+.popover li {
+    padding: 5px;
+}
+.amenities:hover .popover {
+    display: block;
+}
+.locations:hover .popover {
+    display: block;
+}
